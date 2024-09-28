@@ -1,29 +1,30 @@
 # eAuth-front
-RBAC-based identity authentication and access control system [vue-based front-end part]
 
-The back-end link: [https://github.com/Bertramoon/eAuth](https://github.com/Bertramoon/eAuth )
+基于RBAC的身份认证与访问控制系统【前端部分】—— 基于vue3 + element-plus
 
-## Setup
+后端部分链接: [https://github.com/Bertramoon/eAuth](https://github.com/Bertramoon/eAuth )
+
+## 安装
 
 ```sh
 npm install
 ```
 
-## Compile and Run
+## 构建和运行
 
-### Development
+### 测试环境（dev）
 
 ```sh
 npm run dev
 ```
 
-### Production
+### 生产环境（prod）
 
 ```sh
 npm run prod
 ```
 
-## Build
+## 打包
 
 ```sh
 npm run build
