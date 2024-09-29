@@ -346,9 +346,9 @@ const loadRole = (search?: string) => {
     <!-- table display -->
     <el-scrollbar class="main-table">
         <el-table :data="roleList" style="width: 100%" :default-sort="{ prop: 'id', order: 'ascending' }">
-            <el-table-column prop="id" label="Id" width="120" sortable />
-            <el-table-column prop="name" label="Name" width="120" sortable />
-            <el-table-column prop="description" label="Description" />
+            <el-table-column prop="id" label="Id" min-width="15" sortable />
+            <el-table-column prop="name" label="Name" min-width="25" sortable />
+            <el-table-column prop="description" label="Description" show-overflow-tooltip/>
             <el-table-column label="Operations">
                 <template #default="scope">
                     <el-button size="small" @click="handleInfo(scope.$index, scope.row)" plain type="info">
@@ -410,7 +410,7 @@ const loadRole = (search?: string) => {
                 <el-table-column prop="id" label="Id" sortable min-width="20" />
                 <el-table-column prop="method" label="Method" min-width="30" />
                 <el-table-column prop="url" label="Url" sortable min-width="70" />
-                <el-table-column prop="description" label="Description" />
+                <el-table-column prop="description" label="Description" show-overflow-tooltip />
             </el-table>
         </el-scrollbar>
     </el-dialog>

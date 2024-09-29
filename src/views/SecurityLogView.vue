@@ -113,7 +113,7 @@ const resetQuery = () => {
 </script>
 <template>
     <!-- search -->
-    <el-form :inline="true" v-model="form" style="text-align: center;">
+    <el-form :inline="true" v-model="form" style="text-align: center;" size="small">
         <el-form-item label="Operator">
             <el-input v-model="form.username" placeholder="Input username" clearable />
         </el-form-item>
@@ -135,11 +135,9 @@ const resetQuery = () => {
         </el-form-item>
     </el-form>
     <el-row :gutter="20">
-        <el-col :span="12" style="text-align: right;">
-            <el-button @click="resetQuery" plain type="info">Reset</el-button>
-        </el-col>
-        <el-col :span="12">
-            <el-button type="primary" plain @click="querySecurityLog">Query</el-button>
+        <el-col :span="24" style="text-align: center;">
+            <el-button @click="resetQuery" plain type="info" size="small">Reset</el-button>
+            <el-button type="primary" plain @click="querySecurityLog" size="small">Query</el-button>
         </el-col>
     </el-row>
     <!-- table display -->

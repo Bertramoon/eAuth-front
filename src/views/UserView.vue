@@ -299,7 +299,7 @@ const loadUser = (search?: string) => {
     <!-- table display -->
     <el-scrollbar class="main-table">
         <el-table :data="userList" style="width: 100%" :default-sort="{ prop: 'id', order: 'ascending' }">
-            <el-table-column prop="id" label="Id" min-width="30" sortable />
+            <el-table-column prop="id" label="Id" min-width="15" sortable />
             <el-table-column prop="username" label="Username" min-width="30" sortable />
             <el-table-column prop="email" label="Email" min-width="50" sortable />
             <el-table-column prop="locked" label="Locked" min-width="30" sortable :filters="[
@@ -385,7 +385,7 @@ const loadUser = (search?: string) => {
             <el-table :data="rolesByUser" :default-sort="{ prop: 'id', order: 'ascending' }">
                 <el-table-column prop="id" label="Id" sortable min-width="20" />
                 <el-table-column prop="name" label="Name" min-width="50" />
-                <el-table-column prop="description" label="Description" />
+                <el-table-column prop="description" label="Description" show-overflow-tooltip />
             </el-table>
         </el-scrollbar>
     </el-dialog>
