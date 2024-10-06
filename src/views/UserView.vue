@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElTable, type FormRules, type FormInstance } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
+import { Plus, Search } from '@element-plus/icons-vue'
 import { type UserReset, type Role, type User, type UserRegister, type UserUpdate } from '@/types'
 import { lightRolesGet, userGet, userRegister, userUpdate, userGrant, userReset } from '@/api/user'
 import { errorHandle } from '@/utils/responseHandle'
@@ -101,9 +101,15 @@ const handleLocked = (row: User) => {
         locked: row.locked
     }).then(function (response) {
         if (response.status === 201) {
-            ElMessage.success({
-                message: "Update user success!"
-            })
+            if (row.locked) {
+                ElMessage.success({
+                    message: "Locked user success!"
+                })
+            } else {
+                ElMessage.success({
+                    message: "Unlocked user success!"
+                })
+            }
             dialogUpdateUserFormVisible.value = false
             loadUser()
         }
@@ -285,15 +291,15 @@ const loadUser = (search?: string) => {
 </script>
 <template>
     <!-- search && create button -->
-    <el-row>
+    <el-row style="padding-bottom: 10px;">
         <el-col :span="8">
-            <el-input v-model="searchText" placeholder="Search User" />
+            <el-input v-model="searchText" placeholder="Search User by username or email" @keyup.enter="search" size="small"/>
         </el-col>
         <el-col :span="4">
-            <el-button type="primary" :icon="Search" class="search" plain @click="search">Search</el-button>
+            <el-button type="primary" :icon="Search" class="search" plain @click="search" size="small">Search</el-button>
         </el-col>
         <el-col :span="12" style="text-align: right;">
-            <el-button type="primary" plain @click="handleCreateUser">Register user</el-button>
+            <el-button type="primary" plain @click="handleCreateUser" size="small" :icon="Plus">Register user</el-button>
         </el-col>
     </el-row>
     <!-- table display -->

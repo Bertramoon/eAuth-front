@@ -2,6 +2,7 @@
 import { securityLogGet, operateLogGet } from '@/api/log';
 import type { SecurityLog, SecurityLogQuery, OperateLog, OperateLogQuery } from '@/types';
 import { errorHandle } from '@/utils/responseHandle';
+import { Refresh, Search } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { onMounted, reactive, ref } from 'vue';
 
@@ -134,10 +135,10 @@ const resetQuery = () => {
                 start-placeholder="Start date" end-placeholder="End date" />
         </el-form-item>
     </el-form>
-    <el-row :gutter="20">
+    <el-row :gutter="20" style="padding-bottom: 10px;">
         <el-col :span="24" style="text-align: center;">
-            <el-button @click="resetQuery" plain type="info" size="small">Reset</el-button>
-            <el-button type="primary" plain @click="querySecurityLog" size="small">Query</el-button>
+            <el-button @click="resetQuery" plain type="info" size="small" :icon="Refresh">Reset</el-button>
+            <el-button type="primary" plain @click="querySecurityLog" size="small" :icon="Search">Query</el-button>
         </el-col>
     </el-row>
     <!-- table display -->

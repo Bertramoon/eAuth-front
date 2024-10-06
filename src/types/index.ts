@@ -14,7 +14,8 @@ interface PageQuery {
 }
 
 export interface ApiQuery extends PageQuery {
-    url?: string
+    search?: string,
+    method?: string
 }
 
 export interface Role {
@@ -27,7 +28,7 @@ export interface Role {
 export type RoleInput = Pick<Role, 'name' | 'description'>
 
 export interface RoleQuery extends PageQuery {
-    name?: string
+    search?: string
 }
 
 export interface IdList {

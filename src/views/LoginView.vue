@@ -14,7 +14,7 @@ const form = reactive({
 
 const router = useRouter()
 
-const onSubmit = () => {
+const login = () => {
     console.log('submit!')
     request.post("/auth/login", form).then((response) => {
         console.log(response);
@@ -62,10 +62,10 @@ onMounted(() => {
                     <el-input v-model="form.username" />
                 </el-form-item>
                 <el-form-item label="密码">
-                    <el-input v-model="form.password" type="password" show-password />
+                    <el-input v-model="form.password" type="password" show-password @keyup.enter="login"/>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="onSubmit">登录</el-button>
+                    <el-button type="primary" @click="login">登录</el-button>
                     <el-button @click="onReset">重置</el-button>
                 </el-form-item>
             </el-form>

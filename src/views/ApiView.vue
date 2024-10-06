@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElTable, type FormRules, type FormInstance } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
+import { Plus, Search } from '@element-plus/icons-vue'
 import { type Api, type ApiInput, type Role } from '@/types'
 import { getApi, createApi, updateApi, deleteApi } from '@/api/api'
 import { errorHandle } from '@/utils/responseHandle'
@@ -13,9 +13,10 @@ onMounted(() => {
 })
 
 // 搜索框
+const searchMethod = ref<string>()
 const searchText = ref('')
 const search = () => {
-    loadApi(searchText.value)
+    loadApi(searchText.value, searchMethod.value)
 }
 
 // 添加API
@@ -91,6 +92,7 @@ const handleDelete = (index: number, row: Api) => {
 
 // 分页
 const pageSize = ref(20)
+const pageSizes = [20, 50, 100, 200]
 const currentPage = ref(1)
 const total = ref(0)
 
@@ -153,11 +155,12 @@ const addOrUpdateApi = async (formEl: FormInstance | undefined) => {
     })
 }
 
-const loadApi = (search?: string) => {
+const loadApi = (search?: string, method?: string) => {
     getApi({
         page: currentPage.value,
         per_page: pageSize.value,
-        url: search
+        search: search,
+        method: method
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             apiList.value = response.data.data
@@ -187,15 +190,23 @@ const loadApi = (search?: string) => {
 </script>
 <template>
     <!-- search && create button -->
-    <el-row>
+    <el-row style="padding-bottom: 10px;">
+        <el-col :span="3" style="padding-right: 10px;">
+            <el-select v-model="searchMethod" placeholder="Filter by request method" clearable size="small">
+                <el-option label="GET" value="GET" />
+                <el-option label="POST" value="POST" />
+                <el-option label="PUT" value="PUT" />
+                <el-option label="DELETE" value="DELETE" />
+            </el-select>
+        </el-col>
         <el-col :span="8">
-            <el-input v-model="searchText" placeholder="Search API" />
+            <el-input v-model="searchText" placeholder="Search API by url or description" @keyup.enter="search"  size="small"/>
         </el-col>
         <el-col :span="4">
-            <el-button type="primary" :icon="Search" class="search" plain @click="search">Search</el-button>
+            <el-button type="primary" :icon="Search" class="search" plain @click="search" size="small">Search</el-button>
         </el-col>
-        <el-col :span="12" style="text-align: right;">
-            <el-button type="primary" plain @click="openCreateAPIDialog">{{ addTitle }}</el-button>
+        <el-col :span="9" style="text-align: right;">
+            <el-button type="primary" plain @click="openCreateAPIDialog" size="small" :icon="Plus">{{ addTitle }}</el-button>
         </el-col>
     </el-row>
     <!-- table display -->
@@ -204,7 +215,7 @@ const loadApi = (search?: string) => {
             <el-table-column prop="id" label="Id" min-width="15" sortable />
             <el-table-column prop="method" label="Method" min-width="25" sortable />
             <el-table-column prop="url" label="Url" min-width="50" sortable />
-            <el-table-column prop="description" label="Description" show-overflow-tooltip/>
+            <el-table-column prop="description" label="Description" show-overflow-tooltip />
             <el-table-column label="Operations">
                 <template #default="scope">
                     <el-button size="small" @click="handleInfo(scope.$index, scope.row)" plain type="info">
@@ -229,7 +240,7 @@ const loadApi = (search?: string) => {
     <div class="pagination-container">
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" size="large"
             layout="total, sizes, prev, pager, next" :total="total" @current-change="handleCurrentChange"
-            @size-change="handleCurrentChange" />
+            @size-change="handleCurrentChange" :page-sizes="pageSizes" />
     </div>
     <!-- modal -->
     <!-- create or update api dialog -->
@@ -264,7 +275,7 @@ const loadApi = (search?: string) => {
         <el-table :data="rolesByApi" :default-sort="{ prop: 'id', order: 'ascending' }">
             <el-table-column prop="id" label="Id" min-width="30" sortable />
             <el-table-column prop="name" label="Name" min-width="40" sortable />
-            <el-table-column prop="description" label="Description" show-overflow-tooltip/>
+            <el-table-column prop="description" label="Description" show-overflow-tooltip />
         </el-table>
     </el-dialog>
 </template>

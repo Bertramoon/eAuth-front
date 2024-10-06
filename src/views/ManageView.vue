@@ -85,7 +85,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
 <template>
   <div class="common-layout">
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="auto">
         <el-menu :default-active="activeMenu" class="el-menu-vertical-demo" router>
           <el-menu-item index="/api">
             <el-icon>
@@ -170,5 +170,8 @@ const changePassword = async (formEl: FormInstance | undefined) => {
 
 .el-menu-item {
   margin: 10px;
+}
+.el-menu {
+  height: 95vh;
 }
 </style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElTable, type FormRules, type FormInstance } from 'element-plus'
-import { Search } from '@element-plus/icons-vue'
+import { Plus, Search } from '@element-plus/icons-vue'
 import { type Api, type Role, type RoleInput } from '@/types'
 import { getRole, createRole, updateRole, deleteRole, getRoleUnbindApi, roleBindApi, roleUnbindApi } from '@/api/role'
 import { errorHandle } from '@/utils/responseHandle'
@@ -136,7 +136,7 @@ const loadUnbindApi = (roleId: number, search?: string) => {
     return getRoleUnbindApi(roleId, {
         page: unbindApiCurrentPage.value,
         per_page: unbindApiPageSize.value,
-        url: search
+        search: search
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             unbindApiList.value = response.data.data
@@ -306,7 +306,7 @@ const loadRole = (search?: string) => {
     getRole({
         page: currentPage.value,
         per_page: pageSize.value,
-        name: search
+        search: search
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             roleList.value = response.data.data
@@ -332,15 +332,15 @@ const loadRole = (search?: string) => {
 </script>
 <template>
     <!-- search && create button -->
-    <el-row>
+    <el-row style="padding-bottom: 10px;">
         <el-col :span="8">
-            <el-input v-model="searchText" placeholder="Search Role" />
+            <el-input v-model="searchText" placeholder="Search Role by name or description"  @keyup.enter="search" size="small"/>
         </el-col>
         <el-col :span="4">
-            <el-button type="primary" :icon="Search" class="search" plain @click="search">Search</el-button>
+            <el-button type="primary" :icon="Search" class="search" plain @click="search" size="small">Search</el-button>
         </el-col>
         <el-col :span="12" style="text-align: right;">
-            <el-button type="primary" plain @click="openCreateRoleDialog">{{ addTitle }}</el-button>
+            <el-button type="primary" plain @click="openCreateRoleDialog" size="small" :icon="Plus">{{ addTitle }}</el-button>
         </el-col>
     </el-row>
     <!-- table display -->
