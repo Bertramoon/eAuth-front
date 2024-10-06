@@ -252,6 +252,7 @@ const grantPermission = () => {
 
 
 // 分页
+const pageSizes = [20, 50, 100, 200]
 const pageSize = ref(20)
 const currentPage = ref(1)
 const total = ref(0)
@@ -343,8 +344,8 @@ const loadUser = (search?: string) => {
     <!-- pagination -->
     <div class="pagination-container">
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" size="large"
-            layout="total, prev, pager, next" :total="total" @current-change="handleCurrentChange"
-            @size-change="handleCurrentChange" />
+            layout="total, sizes, prev, pager, next" :total="total" @current-change="handleCurrentChange"
+            @size-change="handleCurrentChange" :page-sizes="pageSizes" />
     </div>
     <!-- modal -->
     <!-- create user dialog -->

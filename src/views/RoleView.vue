@@ -86,6 +86,8 @@ const handleBind = (index: number, row: Role) => {
     unbindApiCurrentPage.value = 1
     loadUnbindApi(row.id).then(() => {
         dialogBindApiVisible.value = true
+        bindApiSearchMethod.value = undefined
+        bindApiSearchText.value = ""
     })
     if (bindApiTableRef.value) {
         bindApiTableRef.value.clearSelection()
@@ -117,9 +119,10 @@ const bindApi = () => {
 }
 
 // -搜索API
+const bindApiSearchMethod = ref<string>()
 const bindApiSearchText = ref('')
 const bindSearch = () => {
-    loadUnbindApi(currentBindApiRole.value!.id, bindApiSearchText.value)
+    loadUnbindApi(currentBindApiRole.value!.id, bindApiSearchText.value, bindApiSearchMethod.value)
 }
 
 function differenceBy(arr1: Array<any>, arr2: Array<any>, key: string) {
@@ -132,11 +135,12 @@ function sameBy(arr1: Array<any>, arr2: Array<any>, key: string) {
     return arr1.filter(item => set2.has(item[key]));
 }
 
-const loadUnbindApi = (roleId: number, search?: string) => {
+const loadUnbindApi = (roleId: number, search?: string, method?: string) => {
     return getRoleUnbindApi(roleId, {
         page: unbindApiCurrentPage.value,
         per_page: unbindApiPageSize.value,
-        search: search
+        search: search,
+        method: method
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             unbindApiList.value = response.data.data
@@ -241,6 +245,7 @@ const handleDelete = (index: number, row: Role) => {
 }
 
 // 分页
+const pageSizes = [20, 50, 100, 200]
 const pageSize = ref(20)
 const currentPage = ref(1)
 const total = ref(0)
@@ -334,13 +339,16 @@ const loadRole = (search?: string) => {
     <!-- search && create button -->
     <el-row style="padding-bottom: 10px;">
         <el-col :span="8">
-            <el-input v-model="searchText" placeholder="Search Role by name or description"  @keyup.enter="search" size="small"/>
+            <el-input v-model="searchText" placeholder="Search Role by name or description" @keyup.enter="search"
+                size="small" />
         </el-col>
         <el-col :span="4">
-            <el-button type="primary" :icon="Search" class="search" plain @click="search" size="small">Search</el-button>
+            <el-button type="primary" :icon="Search" class="search" plain @click="search"
+                size="small">Search</el-button>
         </el-col>
         <el-col :span="12" style="text-align: right;">
-            <el-button type="primary" plain @click="openCreateRoleDialog" size="small" :icon="Plus">{{ addTitle }}</el-button>
+            <el-button type="primary" plain @click="openCreateRoleDialog" size="small" :icon="Plus">{{ addTitle
+                }}</el-button>
         </el-col>
     </el-row>
     <!-- table display -->
@@ -348,7 +356,7 @@ const loadRole = (search?: string) => {
         <el-table :data="roleList" style="width: 100%" :default-sort="{ prop: 'id', order: 'ascending' }">
             <el-table-column prop="id" label="Id" min-width="15" sortable />
             <el-table-column prop="name" label="Name" min-width="25" sortable />
-            <el-table-column prop="description" label="Description" show-overflow-tooltip/>
+            <el-table-column prop="description" label="Description" show-overflow-tooltip />
             <el-table-column label="Operations">
                 <template #default="scope">
                     <el-button size="small" @click="handleInfo(scope.$index, scope.row)" plain type="info">
@@ -380,8 +388,8 @@ const loadRole = (search?: string) => {
     <!-- pagination -->
     <div class="pagination-container">
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" size="large"
-            layout="total, prev, pager, next" :total="total" @current-change="handleCurrentChange"
-            @size-change="handleCurrentChange" />
+            layout="total, sizes, prev, pager, next" :total="total" @current-change="handleCurrentChange"
+            @size-change="handleCurrentChange" :page-sizes="pageSizes" />
     </div>
     <!-- modal -->
     <!-- create or update role dialog -->
@@ -416,13 +424,20 @@ const loadRole = (search?: string) => {
     </el-dialog>
     <!-- bind api dialog -->
     <el-dialog v-model="dialogBindApiVisible" :title="dialogBindApiTitle" width="800">
-        <el-row>
-            <el-col :span="10">
-                <el-input v-model="bindApiSearchText" placeholder="Search Api" size="small" />
+        <el-row style="padding-bottom: 10px;">
+            <el-col :span="6" style="padding-right: 10px;">
+                <el-select v-model="bindApiSearchMethod" placeholder="Filter by request method" clearable size="small">
+                    <el-option label="GET" value="GET" />
+                    <el-option label="POST" value="POST" />
+                    <el-option label="PUT" value="PUT" />
+                    <el-option label="DELETE" value="DELETE" />
+                </el-select>
+            </el-col>
+            <el-col :span="12">
+                <el-input v-model="bindApiSearchText" placeholder="Search API by url or description" @keyup.enter="bindSearch"  size="small"/>
             </el-col>
             <el-col :span="4">
-                <el-button type="primary" :icon="Search" class="search" plain @click="bindSearch"
-                    size="small">Search</el-button>
+                <el-button type="primary" :icon="Search" class="search" plain @click="bindSearch" size="small">Search</el-button>
             </el-col>
         </el-row>
         <el-scrollbar class="modal-table">
@@ -432,7 +447,7 @@ const loadRole = (search?: string) => {
                 <el-table-column prop="id" label="Id" sortable min-width="30" />
                 <el-table-column prop="method" label="Method" min-width="40" />
                 <el-table-column prop="url" label="Url" sortable min-width="70" />
-                <el-table-column prop="description" label="Description" />
+                <el-table-column prop="description" label="Description" show-overflow-tooltip/>
             </el-table>
         </el-scrollbar>
         <div class="pagination-container">
