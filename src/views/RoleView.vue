@@ -75,6 +75,7 @@ const unbindApiList = ref<Array<Api>>([])
 const currentBindApiRole = ref<Role>()
 
 // -分页
+const unbindApiPageSizes = [20, 50, 100, 200]
 const unbindApiCurrentPage = ref(1)
 const unbindApiPageSize = ref(20)
 const unbindApiTotal = ref(0)
@@ -434,10 +435,12 @@ const loadRole = (search?: string) => {
                 </el-select>
             </el-col>
             <el-col :span="12">
-                <el-input v-model="bindApiSearchText" placeholder="Search API by url or description" @keyup.enter="bindSearch"  size="small"/>
+                <el-input v-model="bindApiSearchText" placeholder="Search API by url or description"
+                    @keyup.enter="bindSearch" size="small" />
             </el-col>
             <el-col :span="4">
-                <el-button type="primary" :icon="Search" class="search" plain @click="bindSearch" size="small">Search</el-button>
+                <el-button type="primary" :icon="Search" class="search" plain @click="bindSearch"
+                    size="small">Search</el-button>
             </el-col>
         </el-row>
         <el-scrollbar class="modal-table">
@@ -447,13 +450,13 @@ const loadRole = (search?: string) => {
                 <el-table-column prop="id" label="Id" sortable min-width="30" />
                 <el-table-column prop="method" label="Method" min-width="40" />
                 <el-table-column prop="url" label="Url" sortable min-width="70" />
-                <el-table-column prop="description" label="Description" show-overflow-tooltip/>
+                <el-table-column prop="description" label="Description" show-overflow-tooltip />
             </el-table>
         </el-scrollbar>
         <div class="pagination-container">
             <el-pagination v-model:current-page="unbindApiCurrentPage" v-model:page-size="unbindApiPageSize"
-                layout="total, prev, pager, next" :total="unbindApiTotal" @current-change="handleUnbindApiCurrentChange"
-                @size-change="handleUnbindApiCurrentChange" />
+                layout="total, sizes, prev, pager, next" :total="unbindApiTotal" @current-change="handleUnbindApiCurrentChange"
+                @size-change="handleUnbindApiCurrentChange" :page-sizes="unbindApiPageSizes"/>
         </div>
         <template #footer>
             <div class="dialog-footer">
@@ -482,8 +485,7 @@ const loadRole = (search?: string) => {
                 <el-table-column prop="method" label="Method" min-width="40" />
                 <el-table-column prop="url" label="Url" sortable min-width="70" />
                 <el-table-column prop="description" label="Description" />
-            </el-table>
-        </el-scrollbar>
+            </el-table> </el-scrollbar>
         <template #footer>
             <div class="dialog-footer">
                 <el-button type="primary" @click="unbindApi">
