@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElTable, type FormRules, type FormInstance } from 'element-plus'
 import { Plus, Search } from '@element-plus/icons-vue'
-import { type Api, type Role, type RoleInput } from '@/types'
+import {type Api, type Role, type RoleInput, type User} from '@/types'
 import { getRole, createRole, updateRole, deleteRole, getRoleUnbindApi, roleBindApi, roleUnbindApi } from '@/api/role'
 import { errorHandle } from '@/utils/responseHandle'
 
@@ -51,10 +51,21 @@ const dialogApiTableVisible = ref(false)
 const dialogApiTableTitle = ref("APIs by this role")
 const apisByRole = ref<Array<Api>>([])
 
-const handleInfo = (index: number, row: Role) => {
+const handleApiView = (index: number, row: Role) => {
     apisByRole.value = row.apis || []
     dialogApiTableVisible.value = true
     dialogApiTableTitle.value = "APIs by role: " + row.name
+}
+
+// 查看拥有的User
+const dialogUserTableVisible = ref(false)
+const dialogUserTableTitle = ref("APIs by this role")
+const usersByRole = ref<Array<User>>([])
+
+const handleUserView = (index: number, row: Role) => {
+  usersByRole.value = row.users || []
+  dialogUserTableVisible.value = true
+  dialogUserTableTitle.value = "Users by role: " + row.name
 }
 
 // 编辑API
@@ -369,8 +380,11 @@ const loadRole = () => {
             <el-table-column prop="description" label="Description" show-overflow-tooltip />
             <el-table-column label="Operations">
                 <template #default="scope">
-                    <el-button size="small" @click="handleInfo(scope.$index, scope.row)" plain type="info">
+                    <el-button size="small" @click="handleApiView(scope.$index, scope.row)" plain type="info">
                         APIs
+                    </el-button>
+                    <el-button size="small" @click="handleUserView(scope.$index, scope.row)" plain type="info">
+                        Users
                     </el-button>
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)" plain>
                         Edit
@@ -426,11 +440,22 @@ const loadRole = () => {
         <el-scrollbar class="modal-table">
             <el-table :data="apisByRole" :default-sort="{ prop: 'id', order: 'ascending' }">
                 <el-table-column prop="id" label="Id" sortable min-width="20" />
-                <el-table-column prop="method" label="Method" min-width="30" />
+                <el-table-column prop="method" label="Method" min-width="30" sortable />
                 <el-table-column prop="url" label="Url" sortable min-width="70" />
                 <el-table-column prop="description" label="Description" show-overflow-tooltip />
             </el-table>
         </el-scrollbar>
+    </el-dialog>
+    <!--  view binded user dialog-->
+    <el-dialog v-model="dialogUserTableVisible" :title="dialogUserTableTitle" width="800">
+      <el-scrollbar class="modal-table">
+        <el-table :data="usersByRole" :default-sort="{ prop: 'id', order: 'ascending' }">
+          <el-table-column prop="id" label="Id" sortable min-width="20" />
+          <el-table-column prop="username" label="Username" sortable min-width="40" />
+          <el-table-column prop="email" label="Email" sortable min-width="50" />
+          <el-table-column prop="locked" label="Locked" sortable />
+        </el-table>
+      </el-scrollbar>
     </el-dialog>
     <!-- bind api dialog -->
     <el-dialog v-model="dialogBindApiVisible" :title="dialogBindApiTitle" width="800">

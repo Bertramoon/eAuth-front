@@ -22,7 +22,8 @@ export interface Role {
     id: number,
     name: string,
     description?: string,
-    apis?: Array<Api>
+    apis?: Array<Api>,
+    users?: Array<User>
 }
 
 export type RoleInput = Pick<Role, 'name' | 'description'>
