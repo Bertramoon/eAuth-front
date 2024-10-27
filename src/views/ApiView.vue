@@ -14,9 +14,9 @@ onMounted(() => {
 
 // 搜索框
 const searchMethod = ref<string>()
-const searchText = ref('')
+const searchText = ref<string>('')
 const search = () => {
-    loadApi(searchText.value, searchMethod.value)
+    loadApi()
 }
 
 // 添加API
@@ -155,12 +155,12 @@ const addOrUpdateApi = async (formEl: FormInstance | undefined) => {
     })
 }
 
-const loadApi = (search?: string, method?: string) => {
+const loadApi = () => {
     getApi({
         page: currentPage.value,
         per_page: pageSize.value,
-        search: search,
-        method: method
+        search: searchText.value,
+        method: searchMethod.value
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             apiList.value = response.data.data
@@ -177,10 +177,6 @@ const loadApi = (search?: string, method?: string) => {
             apiList.value = []
             total.value = 0
             return
-        }
-        let error_message = error.response.data.error_message
-        if (error.response.data.detail) {
-            error_message += ". Details: " + JSON.stringify(error.response.data.detail)
         }
         ElMessage.error({
             message: errorHandle(error.response.data, "Get API failed!")

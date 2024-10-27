@@ -15,7 +15,7 @@ onMounted(() => {
 // 搜索框
 const searchText = ref('')
 const search = () => {
-    loadUser(searchText.value)
+    loadUser()
 }
 
 // 注册用户
@@ -262,11 +262,11 @@ const handleCurrentChange = () => {
 }
 
 // 公共
-const loadUser = (search?: string) => {
+const loadUser = () => {
     userGet({
         page: currentPage.value,
         per_page: pageSize.value,
-        username: search
+        username: searchText.value
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             userList.value = response.data.data
@@ -275,7 +275,7 @@ const loadUser = (search?: string) => {
     }).catch(function (error) {
         if (error.response.status === 404 && currentPage.value > 1) {
             currentPage.value--
-            loadUser(search)
+            loadUser()
             return
         }
         // 如果最后还是404，将结果置空

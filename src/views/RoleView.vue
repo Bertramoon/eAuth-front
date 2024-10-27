@@ -15,7 +15,7 @@ onMounted(() => {
 // 搜索框
 const searchText = ref('')
 const search = () => {
-    loadRole(searchText.value)
+    loadRole()
 }
 
 // 添加角色
@@ -85,6 +85,9 @@ const handleBind = (index: number, row: Role) => {
     dialogBindApiTitle.value = "Bind APIs for role: " + row.name
     currentBindApiRole.value = row
     unbindApiCurrentPage.value = 1
+    // 将搜索值设置为空
+    bindApiSearchText.value = ""
+    bindApiSearchMethod.value = undefined
     loadUnbindApi(row.id).then(() => {
         dialogBindApiVisible.value = true
         bindApiSearchMethod.value = undefined
@@ -123,7 +126,7 @@ const bindApi = () => {
 const bindApiSearchMethod = ref<string>()
 const bindApiSearchText = ref('')
 const bindSearch = () => {
-    loadUnbindApi(currentBindApiRole.value!.id, bindApiSearchText.value, bindApiSearchMethod.value)
+    loadUnbindApi(currentBindApiRole.value!.id)
 }
 
 function differenceBy(arr1: Array<any>, arr2: Array<any>, key: string) {
@@ -136,12 +139,12 @@ function sameBy(arr1: Array<any>, arr2: Array<any>, key: string) {
     return arr1.filter(item => set2.has(item[key]));
 }
 
-const loadUnbindApi = (roleId: number, search?: string, method?: string) => {
+const loadUnbindApi = (roleId: number) => {
     return getRoleUnbindApi(roleId, {
         page: unbindApiCurrentPage.value,
         per_page: unbindApiPageSize.value,
-        search: search,
-        method: method
+        search: bindApiSearchText.value,
+        method: bindApiSearchMethod.value
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             unbindApiList.value = response.data.data
@@ -150,7 +153,7 @@ const loadUnbindApi = (roleId: number, search?: string, method?: string) => {
     }).catch(function (error) {
         if (error.response.status === 404 && currentPage.value > 1) {
             unbindApiCurrentPage.value--
-            loadUnbindApi(roleId, search)
+            loadUnbindApi(roleId)
             return
         }
         // 如果最后还是404，将结果置空
@@ -188,6 +191,8 @@ const currentUnbindApiRole = ref<Role>()
 const handleUnbind = (index: number, row: Role) => {
     dialogUnbindApiTitle.value = "Unbind APIs for role: " + row.name
     currentUnbindApiRole.value = row
+    unbindApiSearchText.value = ""
+    unbindApiSearchMethod.value = undefined
     bindApiList.value = currentUnbindApiRole.value.apis || []
     dialogUnbindApiVisible.value = true
     if (unbindApiTableRef.value) {
@@ -217,12 +222,16 @@ const unbindApi = () => {
 
 // -搜索API
 const unbindApiSearchText = ref('')
+const unbindApiSearchMethod = ref<string>()
 const unbindSearch = () => {
+    let data = currentUnbindApiRole.value!.apis || []
     if (unbindApiSearchText.value && currentUnbindApiRole.value?.apis) {
-        bindApiList.value = currentUnbindApiRole.value.apis.filter(item => item.url.includes(unbindApiSearchText.value))
-    } else {
-        bindApiList.value = currentUnbindApiRole.value!.apis || []
+      data = data.filter(item => item.url.includes(unbindApiSearchText.value))
     }
+    if (unbindApiSearchMethod.value && currentUnbindApiRole.value?.apis) {
+      data = data.filter(item => item.method.includes(unbindApiSearchMethod.value))
+    }
+    bindApiList.value = data
 }
 
 
@@ -308,11 +317,11 @@ const addOrUpdateRole = async (formEl: FormInstance | undefined) => {
     })
 }
 
-const loadRole = (search?: string) => {
+const loadRole = () => {
     getRole({
         page: currentPage.value,
         per_page: pageSize.value,
-        search: search
+        search: searchText.value
     }).then((response) => {
         if (response.status === 200 && response.data.success === true) {
             roleList.value = response.data.data
@@ -321,7 +330,7 @@ const loadRole = (search?: string) => {
     }).catch(function (error) {
         if (error.response.status === 404 && currentPage.value > 1) {
             currentPage.value--
-            loadRole(search)
+            loadRole()
             return
         }
         // 如果最后还是404，将结果置空
@@ -469,9 +478,18 @@ const loadRole = (search?: string) => {
     <!-- unbind api dialog -->
     <el-dialog v-model="dialogUnbindApiVisible" :title="dialogUnbindApiTitle" width="800">
         <el-row>
-            <el-col :span="10">
-                <el-input v-model="unbindApiSearchText" placeholder="Search Api" size="small" />
-            </el-col>
+          <el-col :span="6" style="padding-right: 10px;">
+            <el-select v-model="unbindApiSearchMethod" placeholder="Filter by request method" clearable size="small">
+              <el-option label="GET" value="GET" />
+              <el-option label="POST" value="POST" />
+              <el-option label="PUT" value="PUT" />
+              <el-option label="DELETE" value="DELETE" />
+            </el-select>
+          </el-col>
+          <el-col :span="12">
+            <el-input v-model="unbindApiSearchText" placeholder="Search API by url or description"
+                      @keyup.enter="unbindSearch" size="small" />
+          </el-col>
             <el-col :span="4">
                 <el-button type="primary" :icon="Search" class="search" plain @click="unbindSearch"
                     size="small">Search</el-button>
