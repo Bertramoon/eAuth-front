@@ -1,29 +1,28 @@
 <script setup lang="ts">
-import { RouterView, useRoute, useRouter } from 'vue-router'
-import { onMounted, reactive, ref, watch } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
-import { type ChangePassword } from '@/types'
-import { logoutPost, userPasswordChange } from '@/api/user'
-import { errorHandle } from '@/utils/responseHandle';
+import {RouterView, useRoute, useRouter} from 'vue-router'
+import {reactive, ref, watch} from 'vue'
+import {ElMessage, type FormInstance, type FormRules} from 'element-plus';
+import {userPasswordChangeCall} from '@/api/user'
+import {errorHandle} from '@/utils/responseHandle';
+import {useUserStore} from "@/stores/user";
+import type {ChangePassword} from "@/types/user";
+import {logoutCall} from "@/api/auth";
 
 
 const router = useRouter()
 const logout = () => {
-  logoutPost().then((response) => {
+  logoutCall().then((response) => {
     if (response.status === 200) {
       ElMessage.success({ message: "Logout success!" })
     }
   }).finally(() => {
-    sessionStorage.removeItem('token')
-    username.value = ''
+    delete userStore.token
+    delete userStore.username
     router.replace('/login')
   })
 }
 
-const username = ref('')
-onMounted(() => {
-  username.value = localStorage.getItem('username') || "undefined"
-})
+const userStore = useUserStore()
 
 const activeMenu = ref(useRoute().path)
 const route = useRoute()
@@ -62,7 +61,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
   if (!formEl) return
   await formEl.validate((valid, fields) => {
     if (!valid) return
-    userPasswordChange(form.value)
+    userPasswordChangeCall(form.value)
       .then(function (response) {
         if (response.status === 200) {
           ElMessage.success({
@@ -123,7 +122,7 @@ const changePassword = async (formEl: FormInstance | undefined) => {
         <el-header height="60px">
           <el-dropdown @command="(args: () => void) => { args() }">
             <span class="el-dropdown-link">
-              {{ username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+              {{ userStore.username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>

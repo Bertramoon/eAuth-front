@@ -1,11 +1,11 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import {createRouter, createWebHashHistory} from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import ManageView from '../views/ManageView.vue'
-import ApiView from '../views/ApiView.vue'
-import RoleView from '../views/RoleView.vue'
-import UserView from '../views/UserView.vue'
 import OperateLogView from '../views/OperateLogView.vue'
 import SecurityLogView from '../views/SecurityLogView.vue'
+import ApiView from '@/views/ApiView.vue'
+import RoleView from "@/views/RoleView.vue";
+import UserView from "@/views/UserView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(),
