@@ -43,7 +43,6 @@ onMounted(() => {
 })
 
 // 搜索框
-const searchMethod = ref<string>()
 const searchService = ref<string>()
 const searchText = ref<string>()
 const loadData = () => {
@@ -231,7 +230,7 @@ const createFilter = (queryString: string) => {
     <template #header>
       <!-- search && create button -->
       <el-col :span="2" style="padding-right: 10px;">
-        <el-select v-model="searchService" placeholder="Filter by service" clearable size="small">
+        <el-select v-model="searchService" placeholder="Filter by service" clearable size="small" @change="loadData">
           <el-option v-for="service in services" :label="service" :value="service"/>
         </el-select>
       </el-col>

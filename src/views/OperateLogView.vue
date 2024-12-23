@@ -5,6 +5,7 @@ import {onMounted, ref} from 'vue';
 import type {AxiosResponse} from "axios";
 import moment from "moment";
 import type {OperateLog, OperateLogQuery} from "@/types/log";
+import {usePageStore} from "@/stores/page";
 
 
 // 初始化数据
@@ -64,8 +65,7 @@ const formatDate = (date: Date) => {
 }
 
 // 分页
-const pageSizes = [20, 50, 100, 200]
-const pageSize = ref(20)
+const pageStore = usePageStore()
 const currentPage = ref(1)
 const total = ref(0)
 
@@ -76,7 +76,7 @@ const handleCurrentChange = () => {
 const loadOperateLog = () => {
   operateLogCall({
     page: currentPage.value,
-    per_page: pageSize.value,
+    per_page: pageStore.pageSize,
     ...pickNonEmptyValues(form.value)
   }).then((response: AxiosResponse) => {
     if (response.status === 200 && response.data.success === true) {
@@ -139,7 +139,7 @@ const resetQuery = () => {
       <el-input v-model="form.ip_addr" placeholder="Input IP address" clearable/>
     </el-form-item>
     <el-form-item label="Request method">
-      <el-select v-model="form.operate_type" placeholder="Select method" clearable>
+      <el-select v-model="form.operate_type" placeholder="Select method" clearable @change="queryOperateLog">
         <el-option label="GET" value="GET"/>
         <el-option label="POST" value="POST"/>
         <el-option label="PUT" value="PUT"/>
@@ -150,7 +150,7 @@ const resetQuery = () => {
       <el-input v-model="form.operate_api" placeholder="Input api" clearable/>
     </el-form-item>
     <el-form-item label="Status code">
-      <el-select v-model="form.status_code" placeholder="Select status code" clearable>
+      <el-select v-model="form.status_code" placeholder="Select status code" clearable @change="queryOperateLog">
         <el-option v-for="item in statusCodeOptions" :key="item.value" :label="item.label"
                    :value="item.value"/>
       </el-select>
@@ -159,7 +159,7 @@ const resetQuery = () => {
       <el-input v-model="form.resource_id" placeholder="Input resource id" clearable/>
     </el-form-item>
     <el-form-item label="Result">
-      <el-select v-model="form.success" placeholder="Select operate result" clearable>
+      <el-select v-model="form.success" placeholder="Select operate result" clearable @change="queryOperateLog">
         <el-option label="Success" :value="true"/>
         <el-option label="Failure" :value="false"/>
       </el-select>
@@ -206,9 +206,9 @@ const resetQuery = () => {
   </el-scrollbar>
   <!-- pagination -->
   <div class="pagination-container">
-    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" size="large"
+    <el-pagination v-model:current-page="currentPage" v-model:page-size="pageStore.pageSize" size="large"
                    layout="total, sizes, prev, pager, next" :total="total" @current-change="handleCurrentChange"
-                   @size-change="handleCurrentChange" :page-sizes="pageSizes"/>
+                   @size-change="handleCurrentChange" :page-sizes="pageStore.pageSizes"/>
   </div>
 </template>
 <style scoped>

@@ -97,7 +97,7 @@ const grantPermission = () => {
       @handle-grant="handleGrant"
   />
   <!-- grant role dialog -->
-  <el-dialog v-model="dialogBindRolesVisible" :title="dialogBindRolesTitle">
+  <el-dialog v-model="dialogBindRolesVisible" :title="dialogBindRolesTitle" width="1000px">
     <el-transfer v-model="bindRolesList" filterable :titles="['Unbind roles', 'Will bind roles']"
                  :button-texts="['Remove roles', 'Add roles']" :data="roleList" style="text-align: center"
                  filter-placeholder="Search role">
@@ -113,5 +113,10 @@ const grantPermission = () => {
 </template>
 
 <style scoped>
-
+:deep(.el-transfer-panel) {
+  width: 300px;
+}
+:deep(.el-transfer-panel__body) {
+  height: 40vh; /* 穿梭框列表高度 */
+}
 </style>

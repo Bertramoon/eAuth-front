@@ -238,7 +238,7 @@ const createFilter = (queryString: string) => {
     <template #header>
       <!-- search && create button -->
       <el-col :span="3" style="padding-right: 10px;">
-        <el-select v-model="searchMethod" placeholder="Filter by request method" clearable size="small">
+        <el-select v-model="searchMethod" placeholder="Filter by request method" clearable size="small" @change="loadData">
           <el-option label="GET" value="GET"/>
           <el-option label="POST" value="POST"/>
           <el-option label="PUT" value="PUT"/>
@@ -246,7 +246,7 @@ const createFilter = (queryString: string) => {
         </el-select>
       </el-col>
       <el-col :span="2" style="padding-right: 10px;">
-        <el-select v-model="searchService" placeholder="Filter by service" clearable size="small">
+        <el-select v-model="searchService" placeholder="Filter by service" clearable size="small" @change="loadData">
           <el-option v-for="service in services" :label="service" :value="service"/>
         </el-select>
       </el-col>
