@@ -6,7 +6,7 @@ import type {AxiosResponse} from "axios";
 import {isSuccess} from "@/utils/responseHandle"
 import {usePageStore} from "@/stores/page";
 import {ElMessage, type FormInstance, type FormRules} from "element-plus";
-import {userRegisterCall, userResetCall, updateUserCall} from "@/api/user";
+import {userRegisterCall, userResetCall, updateUserCall, resetUserLoginIncorrectCall} from "@/api/user";
 import type {User, UserRegister, UserUpdate} from "@/types/user";
 
 // 定义传参数据
@@ -215,6 +215,17 @@ const handleReset = (index: number, row: User) => {
         }
       })
 }
+
+const handleResetLoginIncorrect = (row: User) => {
+  resetUserLoginIncorrectCall(row.id)
+      .then((response: AxiosResponse) => {
+        if (isSuccess(response.data)) {
+          ElMessage.success({
+            message: "Reset login incorrect success!"
+          })
+        }
+      })
+}
 </script>
 <template>
   <!-- table display -->
@@ -263,6 +274,14 @@ const handleReset = (index: number, row: User) => {
             <el-button type="primary" size="small" plain @click="$emit('handleGrant', scope.$index, scope.row)"
                        v-if="hasBind">Grant
             </el-button>
+            <el-popconfirm width="220" confirm-button-text="Confirm" cancel-button-text="Cancel"
+                           title="Are you sure to reset login incorrect for this user?" @confirm="handleResetLoginIncorrect(scope.row)">
+              <template #reference>
+                <el-button size="small" type="warning" plain>
+                  Reset login incorrect
+                </el-button>
+              </template>
+            </el-popconfirm>
             <el-popconfirm width="220" confirm-button-text="Confirm" cancel-button-text="Cancel"
                            title="Are you sure to reset this user?" @confirm="handleReset(scope.$index, scope.row)">
               <template #reference>
